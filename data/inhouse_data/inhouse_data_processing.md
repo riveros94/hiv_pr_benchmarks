@@ -79,12 +79,3 @@ Prepares data for different model architectures:
 ├── rosetta_lr/             # Rosetta features
 └── *.py/*.R                # Processing scripts
 ```
-## References
-- Rhee et al. (2003) - Stanford HIV Drug Resistance Database
-- Zhang et al. (2005) - PhenoSense assay methodology
-- Henikoff & Henikoff (1992) - BLOSUM matrices
-- van der Maaten & Hinton (2008) - t-SNE
-## Notes
-- Maintains data quality through strict filtering
-- Ensures diverse sequence representation in test sets
-- Generates complementary feature types for analysis
