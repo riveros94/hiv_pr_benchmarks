@@ -110,8 +110,14 @@ plt.ylabel('t-SNE Component 2')
 plt.colorbar(label='Cluster')
 plt.show()
 
-# General data
-sequence_data = pd.read_csv('pi_sequences_classification.csv')
+# General data - CLASSIFICATION
+sequence_data = pd.read_csv('../pi_sequences_classification.csv')
 sequence_data = sequence_data.iloc[1:].reset_index(drop=True)
 sequence_data['cluster'] = kmeans_two['cluster']
 sequence_data.to_csv('../pi_sequence_cluster_classification.csv', index=False)
+
+# General data
+sequence_data = pd.read_csv('../pi_final_dataset.csv')
+sequence_data = sequence_data.iloc[1:].reset_index(drop=True)
+sequence_data['cluster'] = kmeans_two['cluster']
+sequence_data.to_csv('../pi_sequence_cluster.csv', index=False)
