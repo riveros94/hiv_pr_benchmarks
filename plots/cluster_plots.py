@@ -174,7 +174,6 @@ def create_combined_figure(data, train, test_data, output_filename='combined_fig
     plt.savefig(output_filename, dpi=DPI, bbox_inches='tight')
     plt.close()
     
-# Example usage:
 data = pd.read_csv('hiv_benchmarks/data/inhouse_data/pi_sequence_cluster.csv')
 tsne = pd.read_csv('hiv_benchmarks/data/inhouse_data/clustering/seq_labels_tsne_2d_kmeans.csv')
 joined_data = pd.concat([data, tsne[['tsne_1', 'tsne_2']]], axis=1)
