@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 26 02:32:34 2025
-
-@author: rocio
-"""
 import os
 import matplotlib.pyplot as plt
 import numpy as np
