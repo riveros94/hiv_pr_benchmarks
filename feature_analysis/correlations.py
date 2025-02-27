@@ -1,18 +1,22 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import pearsonr
-
 def create_combined_correlation_plots(blue_dfs, orange_dfs, column_name='MI_Scores', axis_linewidth=2.0):
     """
-    Create a 2x3 combined figure with correlation plots and additional labels.
+    Create a 2x3 combined figure with correlation plots and updated layout.
     """
-    # Set up the figure
-    fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(24, 16))
+    
+    fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3, figsize=(22, 14))
     plt.rcParams['font.family'] = 'sans-serif'
     
-    def plot_correlation(ax, df1, df2, label1, label2, color, subplot_label, comparison_title):
+    def plot_correlation(ax, df1, df2, color, subplot_label, show_title=False, title=""):
         corr, p_value = pearsonr(df1[column_name], df2[column_name])
+        
+        
+        x_min, x_max = df1[column_name].min(), df1[column_name].max()
+        y_min, y_max = df2[column_name].min(), df2[column_name].max()
+        x_margin = (x_max - x_min) * 0.10  
+        y_margin = (y_max - y_min) * 0.10  
+        
+        ax.set_xlim(x_min - x_margin, x_max + x_margin)
+        ax.set_ylim(y_min - y_margin, y_max + y_margin)
         
         # Create scatter plot
         ax.scatter(df1[column_name], df2[column_name], 
@@ -22,27 +26,31 @@ def create_combined_correlation_plots(blue_dfs, orange_dfs, column_name='MI_Scor
                   alpha=0.7)
         
         # Configure labels
-        ax.set_xlabel(label1, fontsize=22, labelpad=15)
-        ax.set_ylabel(label2, fontsize=22, labelpad=15)
+        ax.set_xlabel('Residue-wise norm mutual inf', fontsize=22, labelpad=15)
+        ax.set_ylabel('Residue-wise norm mutual inf', fontsize=22, labelpad=15)
         
-        # Add title (comparison) above correlation value
-        ax.text(0.5, 1.06, comparison_title, 
+        # Add title only for top row if show_title is True
+        if show_title:
+            ax.text(0.5, 1.15, title, 
+                    transform=ax.transAxes,
+                    fontsize=24,
+                    fontweight='bold',
+                    ha='center')
+        
+        # Add r value in gray box at top center
+        bbox_props = dict(boxstyle="round,pad=0.3", fc='lightgray', ec="gray", alpha=0.8)
+        ax.text(0.16, 1.05, f'r = {corr:.2f}', 
                 transform=ax.transAxes,
                 fontsize=20,
-                fontweight='bold',
-                ha='center')
-        
-        # Add correlation value below title
-        ax.text(0.5, 0.99, f'Pearson Correlation: {corr:.2f}', 
-                transform=ax.transAxes,
-                fontsize=20,
-                ha='center')
-        
-        # Add subplot label outside the plot
-        ax.text(-0.15, -0.15, subplot_label, transform=ax.transAxes, 
-                fontsize=20,
-                fontweight='bold',
                 ha='center',
+                va='top',
+                bbox=bbox_props)
+        
+        ax.text(-0.14, 1.05, subplot_label.upper(), 
+                transform=ax.transAxes, 
+                fontsize=34,
+                fontweight='bold',
+                ha='right',
                 va='center')
         
         # Configure ticks
@@ -63,78 +71,59 @@ def create_combined_correlation_plots(blue_dfs, orange_dfs, column_name='MI_Scor
         
         return corr, p_value
 
-    # Comparison titles
+    # Comparison titles - only for top row
     titles = [
-        'In-house dataset vs Steiner dataset',
-        'In-house dataset vs Shen dataset',
-        'Steiner dataset vs Shen dataset'
+        "In-house vs Steiner's datasets",
+        "In-house vs Shen's datasets",
+        "Steiner's vs Shen's datasets"
     ]
     
     # Add descriptive labels for each method
-    fig.text(0.055, 0.66, 'zScales descriptors', fontsize=20, fontweight='bold', rotation=90)
-    fig.text(0.055, 0.165, 'Rosetta energy terms', fontsize=20, fontweight='bold', rotation=90)
+    # Ajustado o posicionamento dos labels do eixo Y
+    fig.text(0.025, 0.69, 'zScales descriptors', fontsize=24, fontweight='bold', rotation=90)
+    fig.text(0.025, 0.15, 'Rosetta energy terms', fontsize=24, fontweight='bold', rotation=90)
     
     # Blue plots (top row)
     in_house_blue, steiner_blue, triang_blue = blue_dfs
     
     # Plot a: In-house vs Steiner (Blue)
     corr1, p1 = plot_correlation(ax1, in_house_blue, steiner_blue, 
-                               'In-house dataset', 'Steiner dataset',
-                               '#1f77b4', 'a', titles[0])
+                               '#1f77b4', 'a', True, titles[0])
     
     # Plot b: In-house vs Shen (Blue)
     corr2, p2 = plot_correlation(ax2, in_house_blue, triang_blue,
-                               'In-house dataset', 'Shen dataset',
-                               '#1f77b4', 'b', titles[1])
+                               '#1f77b4', 'b', True, titles[1])
     
     # Plot c: Steiner vs Shen (Blue)
     corr3, p3 = plot_correlation(ax3, steiner_blue, triang_blue,
-                               'Steiner dataset', 'Shen dataset',
-                               '#1f77b4', 'c', titles[2])
+                               '#1f77b4', 'c', True, titles[2])
     
-    # Orange plots (bottom row)
+    # Orange plots (bottom row) - no titles
     in_house_orange, steiner_orange, triang_orange = orange_dfs
     
     # Plot d: In-house vs Steiner (Orange)
     corr4, p4 = plot_correlation(ax4, in_house_orange, steiner_orange,
-                               'In-house dataset', 'Steiner dataset',
-                               'orange', 'd', titles[0])
+                               'orange', 'd')
     
     # Plot e: In-house vs Shen (Orange)
     corr5, p5 = plot_correlation(ax5, in_house_orange, triang_orange,
-                               'In-house dataset', 'Shen dataset',
-                               'orange', 'e', titles[1])
+                               'orange', 'e')
     
     # Plot f: Steiner vs Shen (Orange)
     corr6, p6 = plot_correlation(ax6, steiner_orange, triang_orange,
-                               'Steiner dataset', 'Shen dataset',
-                               'orange', 'f', titles[2])
+                               'orange', 'f')
     
-    # Adjust layout with more padding
-    plt.tight_layout(rect=[0.05, 0, 1, 1], pad=4.0)
-    
-    # Print correlation values
-    print("Blue correlations:")
-    print(f"a) In-house vs Steiner - Correlation: {corr1:.2f}, p-value: {p1:.4f}")
-    print(f"b) In-house vs Shen - Correlation: {corr2:.2f}, p-value: {p2:.4f}")
-    print(f"c) Steiner vs Shen - Correlation: {corr3:.2f}, p-value: {p3:.4f}")
-    
-    print("\nOrange correlations:")
-    print(f"d) In-house vs Steiner - Correlation: {corr4:.2f}, p-value: {p4:.4f}")
-    print(f"e) In-house vs Shen - Correlation: {corr5:.2f}, p-value: {p5:.4f}")
-    print(f"f) Steiner vs Shen - Correlation: {corr6:.2f}, p-value: {p6:.4f}")
-    
-    return fig
+    plt.subplots_adjust(left=0.1, right=0.95, bottom=0.1, top=1, wspace=0.3, hspace=0.4)
 
 # z-scales
-in_house_blue = pd.read_csv("nfv/mi_norm_values_nfv.csv")
-steiner_blue = pd.read_csv("nfv/mi_norm_values_nfv.csv")
-triang_blue = pd.read_csv("nfv/mi_norm_values_nfv.csv")
+in_house_blue = pd.read_csv("nfv/inhouse_mi_norm_values_nfv.csv")
+steiner_blue = pd.read_csv("nfv/steiner_mi_norm_values_nfv.csv")
+triang_blue = pd.read_csv("nfv/shen_mi_norm_values_nfv.csv")
 
 # rosetta
-in_house_orange = pd.read_csv("nfv/mi_norm_values_nfv.csv")
-steiner_orange = pd.read_csv("nfv/mi_norm_values_nfv.csv")
-triang_orange = pd.read_csv("nfv/mi_norm_values_nfv.csv")
+in_house_orange = pd.read_csv("nfv/inhouse_mi_norm_values_nfv.csv")
+steiner_orange = pd.read_csv("nfv/steiner_mi_norm_values_nfv.csv")
+triang_orange = pd.read_csv("nfv/shen_mi_norm_values_nfv.csv")
 
 # Create the combined plot
 fig = create_combined_correlation_plots(
