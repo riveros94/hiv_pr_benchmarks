@@ -35,16 +35,11 @@ We implement three distinct strategies for processing HIV-1 sequence data:
 
 ## Models Evaluated
 
-### Deep Learning Approaches
 - **Multilayer Perceptron (MLP)**: Feed-forward architecture with embedding and four hidden layers
 - **Bidirectional Recurrent Neural Network (BRNN)**: LSTM-based architecture for sequence processing
 - **Convolutional Neural Network (CNN)**: Two convolutional layers with max pooling
-
-### Traditional Machine Learning
 - **Random Forest (RF)**: Using 210-dimensional Delaunay triangulation feature vectors
 - **K-Nearest Neighbors (KNN)**: Using 210-dimensional Delaunay triangulation feature vectors
-
-### Interpretable Models
 - **zScales Logistic Regression**: Using physicochemical amino acid descriptors
 - **Rosetta Logistic Regression**: Using Rosetta Energy Function terms
 
