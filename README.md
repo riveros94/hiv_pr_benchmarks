@@ -52,10 +52,8 @@ Tools for analyzing the importance of specific features:
 
 ## Performance Benchmarking
 
-Comprehensive evaluation of both predictive and computational performance:
-- Prediction accuracy, precision, recall, and AUC across all models and datasets
+Comprehensive evaluation of computational performance:
 - Computational efficiency measurements (prediction time per sequence)
-- Memory usage requirements for each approach
 
 ## Requirements
 
